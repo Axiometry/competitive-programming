@@ -74,12 +74,12 @@ object TestHarness {
     @volatile var outIntercept: PipedInputStream = null
     @volatile var errIntercept: ByteArrayRingBuffer = null
   
-    def writeResult(typeName: String, dataXml: xml.NodeSeq) = {
+    def writeResult(resultType: String, dataXml: xml.NodeSeq) = {
       val errLines = Source.fromBytes(errIntercept.toByteArray).getLines()
     
       val xml =
         <result>
-          <type>{typeName}</type>
+          <type>{resultType}</type>
           <std-err>{errLines.map(line => <line>{line}</line>)}</std-err>
           <data>{dataXml}</data>
         </result>
@@ -91,14 +91,18 @@ object TestHarness {
       System.setSecurityManager(securityManager)
       System.exit(0)
     }
+    
     val handleResult: PartialFunction[Result, Unit] = {
-      case Result.Success(time) => writeResult("success", <time>{time}</time>)
-      case Result.WrongAnswer(line, expected, actual) => writeResult("wrong-answer", Seq(
-        line.map(l => <line>{l}</line>),
-        expected.map(s => <expected>{s.map(l => <line>{l}</line>)}</expected>),
-        actual.map(s => <actual>{s.map(l => <line>{l}</line>)}</actual>)
-      ).flatten)
-      case Result.Timeout(time) => writeResult("timeout", <time>{time}</time>)
+      case Result.Success(time) =>
+        writeResult("success", <time>{time}</time>)
+      case Result.WrongAnswer(line, expected, actual) =>
+        writeResult("wrong-answer", Seq(
+          line.map(l => <line>{l}</line>),
+          expected.map(s => <expected>{s.map(l => <line>{l}</line>)}</expected>),
+          actual.map(s => <actual>{s.map(l => <line>{l}</line>)}</actual>)
+        ).flatten)
+      case Result.Timeout(time) =>
+        writeResult("timeout", <time>{time}</time>)
       case Result.RuntimeError(ex) =>
         def errorToXml(ex: Throwable): Seq[xml.Node] = {
           val details = Seq(
@@ -115,7 +119,8 @@ object TestHarness {
         writeResult("runtime-error", Seq(
           <error>{errorToXml(ex)}</error>
         ))
-      case Result.Unknown => writeResult("unknown", Nil)
+      case Result.Unknown =>
+        writeResult("unknown", Nil)
     }
     
     try {
