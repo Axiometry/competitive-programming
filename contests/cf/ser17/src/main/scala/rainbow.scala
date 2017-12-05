@@ -1,0 +1,3 @@
+object rainbow extends App {
+  
+}

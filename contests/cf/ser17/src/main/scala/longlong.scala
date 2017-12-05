@@ -1,0 +1,3 @@
+object longlong extends App {
+  
+}

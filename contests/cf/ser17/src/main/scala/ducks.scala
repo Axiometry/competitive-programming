@@ -1,0 +1,3 @@
+object ducks extends App {
+  
+}

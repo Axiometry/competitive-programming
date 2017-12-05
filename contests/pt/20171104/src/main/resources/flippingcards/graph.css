@@ -1,0 +1,15 @@
+node {
+    size: 5px;
+    fill-color: #777;
+    z-index: 0;
+}
+
+node.marked {
+    fill-color: red;
+}
+
+edge {
+    shape: line;
+    fill-color: #222;
+    arrow-size: 3px, 2px;
+}

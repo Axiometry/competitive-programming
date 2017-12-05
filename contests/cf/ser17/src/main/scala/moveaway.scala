@@ -1,0 +1,3 @@
+object moveaway extends App {
+  
+}
