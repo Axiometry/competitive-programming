@@ -16,7 +16,7 @@ object Build extends sbt.Build {
   }
   
   val setup = taskKey[Unit]("Set up directory structure")
-  val setupProblem = inputKey[Unit]("Create default problem template")
+  val setupProblems = inputKey[Unit]("Create default problem template")
   val runTests = inputKey[Unit]("Test a problem on some input")
   
   val baseSettings = Seq(
@@ -46,17 +46,23 @@ object Build extends sbt.Build {
         fdata.mkdirs()
       }
     },
-    setupProblem := {
+    setupProblems := {
       val base = thisProject.value.base
       val srcDir = base / "src/main/scala"
       val resDir = base / "src/main/resources"
-      val problems = spaceDelimited("<arg>").parsed
+      val args = spaceDelimited("<arg>").parsed
+      
+      val problems: Seq[String] =
+        if(args.isEmpty)
+          srcDir.listFiles().toSeq.filter(f => f.ext == "scala" || f.ext == "java").map(_.base)
+        else args
       
       for(problem <- problems) {
-        val f = srcDir / s"$problem.scala"
+        val fScala = srcDir / s"$problem.scala"
+        val fJava = srcDir / s"$problem.java"
         val fdata = resDir / problem
-        if(!f.exists) {
-          val writer = new PrintWriter(f)
+        if(!fScala.exists && !fJava.exists) {
+          val writer = new PrintWriter(fScala)
           writer.println(s"object $problem extends App {")
           writer.println("  ")
           writer.println("}")

@@ -52,11 +52,11 @@ The SBT project corresponding to the new contest will have the name `<type>-<nam
 ```
 $ sbt
 > project <contest project>
-> setupProblem <problem 1> <problem 2...>
+> setupProblems <problem 1> <problem 2...>
 ```
 (or if you don't care about loading times:)
 ```
-$ sbt "<contest project>/setupProblem <problem 1> <problem 2...>"
+$ sbt "<contest project>/setupProblems <problem 1> <problem 2...>"
 ```
 
 This will create the file `<problem N>.scala` in `src/main/scala` and the directory `<problem N>` in `src/main/resources` for each `N` inside the contest folder.
