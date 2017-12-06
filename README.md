@@ -8,6 +8,7 @@ A collection of solutions to various contest problems. Integrated simple SBT-bas
 | Advent of Code 2016          | /contests/aoc/2016     | aoc-2016    |
 | Advent of Code 2017          | /contests/aoc/2017     | aoc-2017    |
 | Codeforces *                 | /contests/cf/*         | cf-*        |
+| NCPC 2017                    | /contests/ncpc/2017    | ncpc-2017   |
 
 The rest of the contests are waiting to be assorted.
 
