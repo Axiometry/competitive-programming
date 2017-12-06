@@ -80,6 +80,8 @@ $ sbt
 $ sbt "<contest project>/runTests"
 ```
 
+You may use `runTests -f` to indicate that tests should continue past failures.
+
 
 ### Run all of one problem's test cases
 ```

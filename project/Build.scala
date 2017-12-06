@@ -75,7 +75,10 @@ object Build extends sbt.Build {
     runTests := {
       val log = streams.value.log
       val base = thisProject.value.base
-      val args = spaceDelimited("<arg>").parsed
+      val (ignoreFailure, args) = spaceDelimited("<arg>").parsed match {
+        case "-f" +: xs => (true, xs)
+        case xs => (false, xs)
+      }
   
       val classpathOption = "-classpath" :: Path.makeString(Attributed.data((fullClasspath in Compile).value)) :: Nil
       val forkOptionTemplate = ForkOptions(
@@ -176,12 +179,12 @@ object Build extends sbt.Build {
                 }
   
                 log.error(s" $test: Failure: wrong answer ($lineString)")
-                return false
+                if(!ignoreFailure) return false
               case "timeout" =>
                 val Seq(<time>{time}</time>) = data \ "time"
                 
                 log.error(s" $test: Failure: timeout ($time ms)")
-                return false
+                if(!ignoreFailure) return false
               case "runtime-error" =>
                 def parseAndPrintError(indent: String, kind: String, elem: xml.Node): Unit = {
                   val Seq(<class>{errorClass}</class>) = elem \ "class"
@@ -212,10 +215,10 @@ object Build extends sbt.Build {
                 
                 parseAndPrintError("   ", "", errorElem)
                 log.error(s" $test: Failure: runtime error")
-                return false
+                if(!ignoreFailure) return false
               case _ =>
                 log.error(s" $test: Failure: unknown")
-                return false
+                if(!ignoreFailure) return false
             }
           } catch {
             case e: InterruptedException =>
