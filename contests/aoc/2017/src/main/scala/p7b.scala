@@ -8,8 +8,8 @@ object p7b extends App {
   implicit class RegexContext(sc: StringContext) {
     def r = new Regex(sc.parts.mkString, sc.parts.tail.map(_ => "x"): _*)
   }
-  object SetViewExt {
-    def unapplySeq[T](s: IterableView[T, Set[T]]): Option[Seq[T]] = Some(s.toSeq)
+  object Iterable {
+    def unapplySeq[T](s: Iterable[T]): Option[Seq[T]] = Some(s.toSeq)
   }
   
   val lines = io.Source.fromInputStream(System.in).getLines.toSeq
@@ -34,8 +34,8 @@ object p7b extends App {
         
         toposort(newW, newQ)
       } else if(byWeight.size == 2) { // one weight is off
-        val (badWeight, SetViewExt(badDude)) = byWeight.minBy(_._2.size) // bad weight with one dude
-        val (goodWeight, _)                  = byWeight.maxBy(_._2.size) // other good weights
+        val (badWeight, Iterable(badDude)) = byWeight.minBy(_._2.size) // bad weight with one dude
+        val (goodWeight, _)                = byWeight.maxBy(_._2.size) // other good weights
         
         Some(weights(badDude) + (goodWeight - badWeight))
       } else throw new RuntimeException("bad input")
