@@ -35,7 +35,7 @@ object p7b extends App {
         toposort(newW, newQ)
       } else { // one weight is off
         val (badWeight, SetViewExt(badDude)) = byWeight.minBy(_._2.size)
-        val (goodWeight, _)             = byWeight.maxBy(_._2.size)
+        val (goodWeight, _)                  = byWeight.maxBy(_._2.size)
         
         Some(weights(badDude) + (goodWeight - badWeight))
       }
