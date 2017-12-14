@@ -41,7 +41,7 @@ object Build extends sbt.Build {
       srcDir.mkdirs()
       resDir.mkdirs()
       
-      for(f <- srcDir.listFiles) {
+      for(f <- srcDir.listFiles; if f.isFile) {
         val fdata = resDir / f.base
         fdata.mkdirs()
       }
