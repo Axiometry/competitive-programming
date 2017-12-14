@@ -1,18 +1,10 @@
 import scala.annotation.tailrec
 import scala.collection.immutable.Queue
 
-import utils.{lines, RegexContext, Iterable}
+import utils.Iterable
 
 object p07b extends App {
-  val NoChildren = Set.empty[String]
-  
-  val children = lines.map {
-    case r"([a-z]+)$name [^ ]+ -> (.*)$ch" => (name, ch split ", " toSet)
-    case r"([a-z]+)$name .*" => (name, NoChildren)
-  }.toMap
-  val weights = lines.map {
-    case r"""([a-z]+)$name \(([0-9]+)$weight\).*""" => (name, weight.toInt)
-  }.toMap
+  import p07._
   
   @tailrec def toposort(weightTotals: Map[String, Int], q: Queue[String]): Option[Int] = q match {
     case dude +: qs =>

@@ -1,4 +1,11 @@
 object p03a extends App {
+  import p03._
+  
+  val manhatten = ((x: Int, y: Int) => x.abs + y.abs).tupled
+  
+  print(manhatten(numToCoord(readInt)))
+}
+object p03 {
   implicit class IntPow(val i: Int) extends AnyVal {
     def **(j: Int): Int = math.pow(i, j).toInt
   }
@@ -16,7 +23,14 @@ object p03a extends App {
       case (3, off) => (off-(i-1), -(i-1))
     }
   }
-  val manhatten = ((x: Int, y: Int) => x.abs + y.abs).tupled
-  
-  print(manhatten(numToCoord(readInt)))
+  val coordToNum = ((x: Int, y: Int) => {
+    val ring = math.max(x.abs, y.abs)
+    val off =
+      if(ring == x && ring != -y)       y+ring
+      else if(ring == y && ring != x)   (ring-x)+ring*2
+      else if(ring == -x && ring != y)  (ring-y)+ring*4
+      else if(ring == -y && ring != -x) (x+ring)+ring*6
+      else /* ring == 0 */ 1
+    ringToLastNum(ring) + off
+  }).tupled
 }

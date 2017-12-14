@@ -16,4 +16,9 @@ object utils {
   object ToInt {
     def unapply(s: String): Option[Int] = Try(s.toInt).toOption
   }
+  
+  def memoize[I, O](f: I => O): I => O =
+    new scala.collection.mutable.HashMap[I, O]() {
+      override def apply(key: I) = getOrElseUpdate(key, f(key))
+    }
 }
