@@ -1,3 +1,4 @@
+import scala.util.Try
 import scala.util.matching.Regex
 
 object utils {
@@ -10,5 +11,9 @@ object utils {
   
   object Iterable {
     def unapplySeq[T](s: Iterable[T]): Option[Seq[T]] = Some(s.toSeq)
+  }
+  
+  object ToInt {
+    def unapply(s: String): Option[Int] = Try(s.toInt).toOption
   }
 }
