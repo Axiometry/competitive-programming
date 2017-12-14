@@ -1,5 +1,7 @@
+import utils.readLines
+
 object p05a extends App {
-  val ins = io.Source.fromInputStream(System.in).getLines.map(_.toInt).toArray
+  val ins = readLines.map(_.toInt).toArray
   
   var i = 0
   var n = 0

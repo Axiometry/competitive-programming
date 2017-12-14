@@ -1,18 +1,11 @@
 import scala.annotation.tailrec
-import scala.collection.IterableView
 import scala.collection.immutable.Queue
-import scala.util.matching.Regex
+
+import utils.{lines, RegexContext, Iterable}
 
 object p07b extends App {
   val NoChildren = Set.empty[String]
-  implicit class RegexContext(sc: StringContext) {
-    def r = new Regex(sc.parts.mkString, sc.parts.tail.map(_ => "x"): _*)
-  }
-  object Iterable {
-    def unapplySeq[T](s: Iterable[T]): Option[Seq[T]] = Some(s.toSeq)
-  }
   
-  val lines = io.Source.fromInputStream(System.in).getLines.toSeq
   val children = lines.map {
     case r"([a-z]+)$name [^ ]+ -> (.*)$ch" => (name, ch split ", " toSet)
     case r"([a-z]+)$name .*" => (name, NoChildren)
