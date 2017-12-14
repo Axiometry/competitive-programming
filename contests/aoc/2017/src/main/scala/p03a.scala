@@ -1,4 +1,4 @@
-object p3a extends App {
+object p03a extends App {
   implicit class IntPow(val i: Int) extends AnyVal {
     def **(j: Int): Int = math.pow(i, j).toInt
   }

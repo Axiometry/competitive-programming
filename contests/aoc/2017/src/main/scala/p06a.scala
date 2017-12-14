@@ -1,4 +1,4 @@
-object p6a extends App {
+object p06a extends App {
   val initial = readLine.split("\\W+").toIndexedSeq.map(_.toInt)
   val n = initial.size
   

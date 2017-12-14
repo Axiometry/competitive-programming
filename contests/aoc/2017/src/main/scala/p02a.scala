@@ -1,3 +1,3 @@
-object p2a extends App {
+object p02a extends App {
   
 }
