@@ -154,17 +154,17 @@ def simulate[P, R](p0: P, visited: Set[P] = Set.empty[P])(step: (P, Set[P]) => E
 val grid = in.linesIterator.toIndexedSeq
 val w = grid.size
 val h = grid(0).length
-val (x0, y0) = in.linesIterator.zipWithIndex.map { case (s, i) => (i, s.indexOf("^")) }.find(_._2 != -1).get
+val p0@(x0, y0) = in.linesIterator.zipWithIndex.map { case (s, i) => (i, s.indexOf("^")) }.find(_._2 != -1).get
 
 val dx = Seq(-1, 0, 1, 0)
 val dy = Seq(0, 1, 0, -1)
 
-def simulateGame(replace: Option[(Int, Int)]): Option[Int] = {
+def simulateGame(replace: Option[(Int, Int)]): Option[Set[(Int, Int)]] = {
   @inline def isBlocked(p: Pos) =
     grid(p._1)(p._2) == '#' || (replace.isDefined && p.x == replace.get._1 && p._2 == replace.get._2)
   simulate(Pos(x0, y0, 0)) { case (p@Pos(x, y, r), visited) =>
     if (x < 0 || y < 0 || x >= w || y >= h)
-      Right(Some(visited.filterNot(isBlocked).map(p => (p.x, p.y)).size))
+      Right(Some(visited.filterNot(isBlocked).map(p => (p.x, p.y))))
     else if(isBlocked(p))
       Left(Pos(x-dx(r), y-dy(r), (r+1)%4))
     else if (!visited(p))
@@ -174,8 +174,6 @@ def simulateGame(replace: Option[(Int, Int)]): Option[Int] = {
   }
 }
 
-println(simulateGame(None).get)
-
-println((for (x <- 0 until w; y <- 0 until h; if x != x0 || y != y0; if grid(x)(y) != '#') yield {
-  if (simulateGame(Some((x, y))).isEmpty) 1 else 0
-}).sum)
+val visited = simulateGame(None).get
+println(visited.size)
+println(visited.count(p => p != p0 && simulateGame(Some(p)).isEmpty))
