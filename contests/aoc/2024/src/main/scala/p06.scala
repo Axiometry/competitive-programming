@@ -140,40 +140,42 @@ val in = """..#.....##......#............#..................................#...
 #.........
 ......#..."""
 
+case class Pos(x: Int, y: Int, r: Int)
+
 @scala.annotation.tailrec
-def simulate[P, R](p0: P, visited: Set[P])(step: (P, Set[P]) => Either[P, R]): R = {
+def simulate[P, R](p0: P, visited: Set[P] = Set.empty[P])(step: (P, Set[P]) => Either[P, R]): R = {
   step(p0, visited) match {
     case Left(p1) => simulate(p1, visited + p0)(step)
     case Right(r) => r
   }
 }
-def simulate[P, R](p0: P)(step: (P, Set[P]) => Either[P, R]): R = simulate(p0, Set())(step)
 
 
 val grid = in.linesIterator.toIndexedSeq
 val w = grid.size
 val h = grid(0).length
-val p0 = in.linesIterator.zipWithIndex.map { case (s, i) => (i, s.indexOf("^")) }.find(_._2 != -1).get
+val (x0, y0) = in.linesIterator.zipWithIndex.map { case (s, i) => (i, s.indexOf("^")) }.find(_._2 != -1).get
 
 val dx = Seq(-1, 0, 1, 0)
 val dy = Seq(0, 1, 0, -1)
 
 def simulateGame(replace: Option[(Int, Int)]): Option[Int] = {
-  @inline def isBlocked(p: (Int,  Int, Int)) =
-    grid(p._1)(p._2) == '#' || (replace.isDefined && p._1 == replace.get._1 && p._2 == replace.get._2)
-  simulate((p0._1, p0._2, 0)) { case (p@(x, y, r), visited) =>
-    if (x >= 0 && y >= 0 && x < w && y < h) {
-      if (!isBlocked(p)) {
-        if (!visited(p)) {
-          Left((x+dx(r), y+dy(r), r))
-        } else Right(None)
-      } else Left((x-dx(r), y-dy(r), (r+1)%4))
-    } else Right(Some(visited.filterNot(isBlocked).map(p => (p._1, p._2)).size))
+  @inline def isBlocked(p: Pos) =
+    grid(p._1)(p._2) == '#' || (replace.isDefined && p.x == replace.get._1 && p._2 == replace.get._2)
+  simulate(Pos(x0, y0, 0)) { case (p@Pos(x, y, r), visited) =>
+    if (x < 0 || y < 0 || x >= w || y >= h)
+      Right(Some(visited.filterNot(isBlocked).map(p => (p.x, p.y)).size))
+    else if(isBlocked(p))
+      Left(Pos(x-dx(r), y-dy(r), (r+1)%4))
+    else if (!visited(p))
+      Left(Pos(x+dx(r), y+dy(r), r))
+    else
+      Right(None)
   }
 }
 
 println(simulateGame(None).get)
 
-println((for (x <- 0 until w; y <- 0 until h; if x != p0._1 || y != p0._2; if grid(x)(y) != '#') yield {
+println((for (x <- 0 until w; y <- 0 until h; if x != x0 || y != y0; if grid(x)(y) != '#') yield {
   if (simulateGame(Some((x, y))).isEmpty) 1 else 0
 }).sum)
